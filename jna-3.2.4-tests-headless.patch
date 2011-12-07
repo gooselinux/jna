@@ -1,0 +1,11 @@
+diff -up ./build.xml.tests-headless ./build.xml
+--- ./build.xml.tests-headless	2009-11-09 10:35:40.000000000 +0100
++++ ./build.xml	2009-11-09 10:36:06.000000000 +0100
+@@ -466,6 +466,7 @@
+       <jvmarg value="-Djna.protected=true"/>
+       <jvmarg value="-Djna.builddir=${build}"/>
+       <jvmarg value="${vmopt.arch}"/>
++      <jvmarg value="-Djava.awt.headless=true"/>
+       <classpath><path refid="test.runpath"/></classpath>
+       <formatter type="xml"/>
+       <batchtest todir="${results.junit}">

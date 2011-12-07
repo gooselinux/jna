@@ -1,0 +1,40 @@
+--- build.xml.orig	2010-04-22 15:22:49.082452327 -0400
++++ build.xml	2010-04-22 15:22:54.266203934 -0400
+@@ -540,8 +540,6 @@
+       <group title="Examples" packages="com.sun.jna.examples,com.sun.jna.examples.dnd"/>
+       <group title="Unix Examples" packages="com.sun.jna.examples.unix"/>
+       <group title="Windows Examples" packages="com.sun.jna.examples.win32"/>
+-
+-      <arg value="-notimestamp"/>
+     </javadoc>
+   </target>
+ 
+--- src/com/sun/jna/Function.java.orig	2010-04-22 15:23:32.766205632 -0400
++++ src/com/sun/jna/Function.java	2010-04-22 15:23:55.909207399 -0400
+@@ -76,7 +76,7 @@
+      *                  Library in which to find the native function
+      * @param   functionName
+      *                  Name of the native function to be linked with
+-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
++     * @throws UnsatisfiedLinkError if the library is not found or
+      * the given function name is not found within the library.
+      */
+     public static Function getFunction(String libraryName, String functionName) {
+@@ -97,7 +97,7 @@
+      * @param   callFlags
+      *                  Function <a href="#callflags">call flags</a>
+      *                  
+-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
++     * @throws UnsatisfiedLinkError if the library is not found or
+      * the given function name is not found within the library.
+      */
+     public static Function getFunction(String libraryName, String functionName, int callFlags) {
+@@ -161,7 +161,7 @@
+      *                 Name of the native function to be linked with
+      * @param  callFlags
+      *                 Function <a href="#callflags">call flags</a>
+-     * @throws {@link UnsatisfiedLinkError} if the given function name is
++     * @throws UnsatisfiedLinkError if the given function name is
+      * not found within the library.
+      */
+     Function(NativeLibrary library, String functionName, int callFlags) {

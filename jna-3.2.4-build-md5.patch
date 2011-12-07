@@ -1,0 +1,11 @@
+--- build.xml	2010-04-21 17:45:22.419903811 -0400
++++ build.xml.orig	2010-04-21 17:45:10.204664997 -0400
+@@ -43,7 +43,7 @@
+   <property name="jni.revision" value="1"/>
+   <property name="jni.build" value="${build.number}"/>
+   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
+-  <property name="jni.md5" value=""/>
++  <property name="jni.md5" value="c870290c36c8d3fdf85db7c782febc3f"/>
+   <property name="spec.title" value="Java Native Access (JNA)"/>
+   <property name="spec.vendor" value="${vendor}"/>
+   <property name="spec.version" value="${jna.major}"/>

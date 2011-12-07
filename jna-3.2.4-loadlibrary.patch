@@ -1,0 +1,142 @@
+diff -up ./src/com/sun/jna/Native.java.loadlib ./src/com/sun/jna/Native.java
+--- ./src/com/sun/jna/Native.java.loadlib	2009-11-09 10:23:05.000000000 +0100
++++ ./src/com/sun/jna/Native.java	2009-11-09 10:30:41.000000000 +0100
+@@ -630,131 +630,19 @@ public final class Native {
+     }
+ 
+     /**
+-     * Loads the JNA stub library.  It will first attempt to load this library
+-     * from the directories specified in jna.boot.library.path.  If that fails,
+-     * it will fallback to loading from the system library paths. Finally it will
+-     * attempt to extract the stub library from from the JNA jar file, and load it.
+-     * <p>
+-     * The jna.boot.library.path property is mainly to support jna.jar being
+-     * included in -Xbootclasspath, where java.library.path and LD_LIBRARY_PATH
+-     * are ignored.  It might also be useful in other situations.
+-     * </p>
++     * Loads the JNA stub library.
++     *
++     ** MODIFIED FROM UPSTREAM - we rip out all sorts of gunk here that is
++     ** unnecessary when JNA is properly installed with the OS.
+      */
+     private static void loadNativeLibrary() {
+-        String libName = "jnidispatch";
+-        String bootPath = System.getProperty("jna.boot.library.path");
+-        if (bootPath != null) {
+-            String[] dirs = bootPath.split(File.pathSeparator);
+-            for (int i = 0; i < dirs.length; ++i) {
+-                String path = new File(new File(dirs[i]), System.mapLibraryName(libName)).getAbsolutePath();
+-                try {
+-                    System.load(path);
+-                    nativeLibraryPath = path;
+-                    return;
+-                } catch (UnsatisfiedLinkError ex) {
+-                }
+-                if (Platform.isMac()) {
+-                    String orig, ext;
+-                    if (path.endsWith("dylib")) {
+-                        orig = "dylib";
+-                        ext = "jnilib";
+-                    } else {
+-                        orig = "jnilib";
+-                        ext = "dylib";
+-                    }
+-                    try {
+-                        path = path.substring(0, path.lastIndexOf(orig)) + ext;
+-                        System.load(path);
+-                        nativeLibraryPath = path;
+-                        return;
+-                    } catch (UnsatisfiedLinkError ex) {
+-                    }
+-                }
+-            }
+-        }
+         try {
+-            System.loadLibrary(libName);
+-            nativeLibraryPath = libName;
++            System.load("@JNIPATH@/" + System.mapLibraryName("jnidispatch"));
++            nativeLibraryPath = "@JNIPATH@/" + System.mapLibraryName("jnidispatch");
+         }
+         catch(UnsatisfiedLinkError e) {
+-            loadNativeLibraryFromJar();
+-        }
+-    }
+-
+-    /**
+-     * Attempts to load the native library resource from the filesystem,
+-     * extracting the JNA stub library from jna.jar if not already available.
+-     */
+-    private static void loadNativeLibraryFromJar() {
+-        String libname = System.mapLibraryName("jnidispatch");
+-        String arch = System.getProperty("os.arch");
+-        String name = System.getProperty("os.name");
+-        String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
+-        URL url = Native.class.getResource(resourceName);
+-                
+-        // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual
+-        // .dylib extension 
+-        if (url == null && Platform.isMac()
+-            && resourceName.endsWith(".dylib")) {
+-            resourceName = resourceName.substring(0, resourceName.lastIndexOf(".dylib")) + ".jnilib";
+-            url = Native.class.getResource(resourceName);
+-        }
+-        if (url == null) {
+-            throw new UnsatisfiedLinkError("jnidispatch (" + resourceName 
+-                                           + ") not found in resource path");
+-        }
+-    
+-        File lib = null;
+-        if (url.getProtocol().toLowerCase().equals("file")) {
+-            try {
+-                lib = new File(url.toURI());
+-            }
+-            catch(URISyntaxException e) {
+-                lib = new File(url.getPath());
+-            }
+-            if (!lib.exists()) {
+-                throw new Error("File URL " + url + " could not be properly decoded");
+-            }
+-        }
+-        else {
+-            InputStream is = Native.class.getResourceAsStream(resourceName);
+-            if (is == null) {
+-                throw new Error("Can't obtain jnidispatch InputStream");
+-            }
+-            
+-            FileOutputStream fos = null;
+-            try {
+-                // Suffix is required on windows, or library fails to load
+-                // Let Java pick the suffix, except on windows, to avoid
+-                // problems with Web Start.
+-                lib = File.createTempFile("jna", Platform.isWindows()?".dll":null);
+-                lib.deleteOnExit();
+-                ClassLoader cl = Native.class.getClassLoader();
+-                if (Platform.deleteNativeLibraryAfterVMExit()
+-                    && (cl == null
+-                        || cl.equals(ClassLoader.getSystemClassLoader()))) {
+-                    Runtime.getRuntime().addShutdownHook(new DeleteNativeLibrary(lib));
+-                }
+-                fos = new FileOutputStream(lib);
+-                int count;
+-                byte[] buf = new byte[1024];
+-                while ((count = is.read(buf, 0, buf.length)) > 0) {
+-                    fos.write(buf, 0, count);
+-                }
+-            }
+-            catch(IOException e) {
+-                throw new Error("Failed to create temporary file for jnidispatch library: " + e);
+-            }
+-            finally {
+-                try { is.close(); } catch(IOException e) { }
+-                if (fos != null) {
+-                    try { fos.close(); } catch(IOException e) { }
+-                }
+-            }
+-            unpacked = true;
++            throw new RuntimeException(e);
+         }
+-        System.load(lib.getAbsolutePath());
+-        nativeLibraryPath = lib.getAbsolutePath();
+     }
+ 
+     /**
